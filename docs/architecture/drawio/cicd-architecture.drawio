@@ -1,0 +1,74 @@
+<mxfile host="app.diagrams.net" modified="2026-10-09T17:00:00.000Z" agent="InfraPilot AI Docs" version="22.1.0" type="device">
+  <diagram id="cicd-architecture" name="CI-CD Architecture">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="InfraPilot AI — CI/CD Architecture&#xa;GitHub Actions → lint/test/build → OIDC to AWS → deploy S3/CloudFront + Lambda&#xa;[Workflows SCAFFOLDED — AWS role ARNs and resource names are placeholders]" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=15;" vertex="1" parent="1">
+          <mxGeometry x="80" y="15" width="1300" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Source -->
+        <mxCell id="gh" value="GitHub Repository&#xa;InfraPilot AI&#xa;[IMPLEMENTED code]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8EAF6;strokeColor=#283593;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="140" width="160" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- CI -->
+        <mxCell id="ci-lane" value="CI — .github/workflows/ci.yml [SCAFFOLDED]" style="swimlane;startSize=28;fillColor=#E3F2FD;strokeColor=#1565C0;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="260" y="110" width="520" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="ci1" value="Lint&#xa;ruff (Python)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=11;" vertex="1" parent="ci-lane">
+          <mxGeometry x="20" y="50" width="100" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="ci2" value="Test&#xa;pytest" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=11;" vertex="1" parent="ci-lane">
+          <mxGeometry x="140" y="50" width="100" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="ci3" value="Build backend&#xa;Lambda zip /&#xa;deps package" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=11;" vertex="1" parent="ci-lane">
+          <mxGeometry x="260" y="45" width="110" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="ci4" value="Build frontend&#xa;Vite → dist/&#xa;[when present]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;dashed=1;fontSize=11;" vertex="1" parent="ci-lane">
+          <mxGeometry x="390" y="45" width="110" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- CD -->
+        <mxCell id="cd-lane" value="CD — deploy.yml (workflow_dispatch) [SCAFFOLDED]" style="swimlane;startSize=28;fillColor=#FFF3E0;strokeColor=#EF6C00;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="820" y="110" width="280" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="oidc" value="GitHub OIDC&#xa;→ AWS IAM role&#xa;(no long-lived keys)&#xa;[PLACEHOLDER ARN]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#EF6C00;fontSize=11;" vertex="1" parent="cd-lane">
+          <mxGeometry x="40" y="45" width="200" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- AWS targets -->
+        <mxCell id="aws" value="AWS deploy targets [PLANNED resources]" style="swimlane;startSize=28;fillColor=#E8F5E9;strokeColor=#2E7D32;fontStyle=1;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="260" y="340" width="840" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="d1" value="S3 sync&#xa;frontend dist/&#xa;+ invalidate&#xa;CloudFront" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;dashed=1;fontSize=11;" vertex="1" parent="aws">
+          <mxGeometry x="30" y="50" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="d2" value="Lambda&#xa;update-function-code&#xa;FastAPI + Mangum" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;dashed=1;fontSize=11;" vertex="1" parent="aws">
+          <mxGeometry x="230" y="50" width="170" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="d3" value="API Gateway&#xa;(stable; redeploy&#xa;stage if needed)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;dashed=1;fontSize=11;" vertex="1" parent="aws">
+          <mxGeometry x="440" y="50" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="d4" value="Least-privilege&#xa;deploy role&#xa;(S3/Lambda only)&#xa;see DEPLOYMENT.md" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFECB3;strokeColor=#F9A825;fontSize=11;" vertex="1" parent="aws">
+          <mxGeometry x="640" y="50" width="170" height="110" as="geometry"/>
+        </mxCell>
+
+        <!-- Triggers -->
+        <mxCell id="trig" value="Triggers: push/PR → CI only. Deploy is manual workflow_dispatch (and optional release tag later). Never store AWS_ACCESS_KEY_ID in GitHub secrets when OIDC is available." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#9E9E9E;align=left;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="580" width="1060" height="55" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="e1" style="endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="gh" target="ci1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e2" style="endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="ci1" target="ci2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e3" style="endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="ci2" target="ci3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e4" style="endArrow=classic;strokeWidth=2;html=1;dashed=1;" edge="1" parent="1" source="ci3" target="ci4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e5" style="endArrow=classic;strokeWidth=2;html=1;dashed=1;" edge="1" parent="1" source="ci4" target="oidc"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e6" style="endArrow=classic;strokeWidth=2;html=1;dashed=1;" edge="1" parent="1" source="oidc" target="d1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="e7" style="endArrow=classic;strokeWidth=2;html=1;dashed=1;" edge="1" parent="1" source="oidc" target="d2"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

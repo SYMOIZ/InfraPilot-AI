@@ -1,0 +1,90 @@
+<mxfile host="app.diagrams.net" modified="2026-10-09T17:00:00.000Z" agent="InfraPilot AI Docs" version="22.1.0" type="device">
+  <diagram id="agent-workflow" name="Agent Workflow">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="InfraPilot AI — Agent Workflow Pipeline&#xa;(All stages IMPLEMENTED in agent/ + rules/; Bedrock optional with DEMO_MODE fallback)" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="120" y="20" width="1100" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Stage 1 -->
+        <mxCell id="s1" value="1. Requirements&#xa;Interpreter&#xa;agent/requirements_interpreter.py&#xa;[IMPLEMENTED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="120" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="s1d" value="Normalize purpose,&#xa;workload, traffic,&#xa;sensitivity, region,&#xa;clarifications" style="text;html=1;align=center;fontSize=10;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="40" y="240" width="160" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Stage 2 -->
+        <mxCell id="s2" value="2. Architecture&#xa;Planner&#xa;agent/architecture_planner.py&#xa;+ Bedrock&#xa;[IMPLEMENTED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="120" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="s2d" value="Produce nodes/edges&#xa;Architecture JSON&#xa;(no Terraform/CFN)" style="text;html=1;align=center;fontSize=10;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="240" y="240" width="160" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Stage 3 -->
+        <mxCell id="s3" value="3. Diagram&#xa;Builder&#xa;drawio_builder /&#xa;drawio_parser&#xa;[IMPLEMENTED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="120" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="s3d" value="Architecture ↔&#xa;Draw.io XML&#xa;upload/parse round-trip" style="text;html=1;align=center;fontSize=10;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="440" y="240" width="160" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Stage 4 -->
+        <mxCell id="s4" value="4. Rules Engine&#xa;rules/engine.py&#xa;security, cost,&#xa;reliability, scale,&#xa;best practice&#xa;[IMPLEMENTED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=11;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="110" width="160" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="s4d" value="Deterministic&#xa;Pass/Fail/Warning&#xa;scores 0–100" style="text;html=1;align=center;fontSize=10;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="640" y="250" width="160" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Stage 5 -->
+        <mxCell id="s5" value="5. AI Gap&#xa;Analyst&#xa;agent/gap_analyst.py&#xa;+ Bedrock&#xa;[IMPLEMENTED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="840" y="120" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="s5d" value="LLM narrative gaps&#xa;on top of rule&#xa;findings" style="text;html=1;align=center;fontSize=10;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="840" y="240" width="160" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Stage 6 -->
+        <mxCell id="s6" value="6. Optimization&#xa;Planner&#xa;agent/optimization_planner.py&#xa;[IMPLEMENTED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="120" width="160" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="s6d" value="Prioritized&#xa;recommendations&#xa;(qualitative cost)" style="text;html=1;align=center;fontSize=10;fontColor=#555555;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="240" width="160" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Stage 7 -->
+        <mxCell id="s7" value="7. Report / Export&#xa;agent/report_generator.py&#xa;+ exporter service&#xa;JSON / Draw.io / XLSX&#xa;[IMPLEMENTED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#EF6C00;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="540" y="360" width="280" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- API layer note -->
+        <mxCell id="api" value="FastAPI routers (/api/v1): requirements → architecture → evaluation → optimization → export&#xa;Orchestration lives in backend/app/routers + services; DEMO_MODE skips live Bedrock" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#9E9E9E;fontSize=11;align=left;spacing=8;" vertex="1" parent="1">
+          <mxGeometry x="40" y="540" width="1160" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Arrows -->
+        <mxCell id="a1" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="s1" target="s2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a2" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="s2" target="s3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a3" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="s3" target="s4"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a4" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="s4" target="s5"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a5" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="s5" target="s6"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="a6" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="s6" target="s7">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points"><mxPoint x="1120" y="420"/></Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="a7" style="edgeStyle=orthogonalEdgeStyle;endArrow=classic;strokeWidth=1;dashed=1;html=1;strokeColor=#757575;" edge="1" parent="1" source="s4" target="s7">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="a7l" value="findings + scores" style="edgeLabel;html=1;fontSize=10;" vertex="1" connectable="0" parent="a7">
+          <mxGeometry x="-0.1" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

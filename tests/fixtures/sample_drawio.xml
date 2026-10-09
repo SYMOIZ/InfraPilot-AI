@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" version="22.1.0">
+  <diagram id="sample" name="Sample Web App">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="cf1" value="CloudFront" style="shape=mxgraph.aws4.cloudfront;fillColor=#8C4FFF;" vertex="1" parent="1">
+          <mxGeometry x="80" y="40" width="120" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="s3a" value="S3 Assets" style="shape=mxgraph.aws4.s3;fillColor=#7AA116;" vertex="1" parent="1">
+          <mxGeometry x="80" y="200" width="120" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="apigw1" value="API Gateway" style="shape=mxgraph.aws4.api_gateway;fillColor=#8C4FFF;" vertex="1" parent="1">
+          <mxGeometry x="280" y="40" width="120" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="lam1" value="Lambda" style="shape=mxgraph.aws4.lambda;fillColor=#ED7100;" vertex="1" parent="1">
+          <mxGeometry x="280" y="200" width="120" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="ddb1" value="DynamoDB" style="shape=mxgraph.aws4.dynamodb;fillColor=#C925D1;" vertex="1" parent="1">
+          <mxGeometry x="480" y="200" width="120" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1" value="static" style="edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="cf1" target="s3a">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" value="api" style="edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="cf1" target="apigw1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" value="invoke" style="edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="apigw1" target="lam1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" value="data" style="edgeStyle=orthogonalEdgeStyle;" edge="1" parent="1" source="lam1" target="ddb1">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

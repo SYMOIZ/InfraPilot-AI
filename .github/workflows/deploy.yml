@@ -1,0 +1,122 @@
+name: Deploy
+
+# Manual deploy only. Configure OIDC + least-privilege role before enabling.
+# PLACEHOLDERS — replace vars/secrets; do not commit real account ARNs with keys.
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Target environment label (informational)
+        required: true
+        default: staging
+        type: choice
+        options:
+          - staging
+          - production
+      deploy_frontend:
+        description: Sync frontend dist to S3 and invalidate CloudFront
+        required: true
+        default: false
+        type: boolean
+      deploy_backend:
+        description: Update Lambda function code
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  id-token: write   # OIDC
+  contents: read
+
+env:
+  AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+  # Set these in GitHub Actions variables (not long-lived access keys):
+  #   AWS_ROLE_TO_ASSUME = arn:aws:iam::ACCOUNT_ID:role/infrapilot-github-deploy
+  #   LAMBDA_FUNCTION_NAME = infrapilot-api
+  #   FRONTEND_BUCKET = infrapilot-frontend-...
+  #   CLOUDFRONT_DISTRIBUTION_ID = E...
+  # Deploy role should allow ONLY: lambda:UpdateFunctionCode,
+  # s3:PutObject/DeleteObject/ListBucket on frontend bucket,
+  # cloudfront:CreateInvalidation — see docs/DEPLOYMENT.md and docs/SECURITY.md
+
+jobs:
+  deploy:
+    name: Deploy via OIDC
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Require OIDC role variable
+        run: |
+          if [ -z "${{ vars.AWS_ROLE_TO_ASSUME }}" ]; then
+            echo "Set repository/environment variable AWS_ROLE_TO_ASSUME to your IAM role ARN."
+            echo "Do NOT use long-lived AWS_ACCESS_KEY_ID when OIDC is available."
+            exit 1
+          fi
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Set up Python
+        if: inputs.deploy_backend
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Package and update Lambda
+        if: inputs.deploy_backend
+        run: |
+          set -euo pipefail
+          FUNC="${{ vars.LAMBDA_FUNCTION_NAME }}"
+          if [ -z "$FUNC" ]; then
+            echo "Set vars.LAMBDA_FUNCTION_NAME"
+            exit 1
+          fi
+          BUILD=dist/lambda-deploy
+          rm -rf "$BUILD" dist/infrapilot-api-deploy.zip
+          mkdir -p "$BUILD"
+          pip install -r backend/requirements.txt -t "$BUILD"
+          cp -R backend/app agent rules catalog "$BUILD/"
+          (cd "$BUILD" && zip -qr ../infrapilot-api-deploy.zip .)
+          aws lambda update-function-code \
+            --function-name "$FUNC" \
+            --zip-file fileb://dist/infrapilot-api-deploy.zip
+
+      - name: Set up Node
+        if: inputs.deploy_frontend
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Build and sync frontend
+        if: inputs.deploy_frontend
+        run: |
+          set -euo pipefail
+          if [ ! -f frontend/package.json ]; then
+            echo "frontend/ missing — skip or create SPA first"
+            exit 1
+          fi
+          BUCKET="${{ vars.FRONTEND_BUCKET }}"
+          DIST_ID="${{ vars.CLOUDFRONT_DISTRIBUTION_ID }}"
+          if [ -z "$BUCKET" ]; then
+            echo "Set vars.FRONTEND_BUCKET"
+            exit 1
+          fi
+          (cd frontend && npm ci && npm run build)
+          aws s3 sync frontend/dist/ "s3://${BUCKET}/" --delete
+          if [ -n "$DIST_ID" ]; then
+            aws cloudfront create-invalidation --distribution-id "$DIST_ID" --paths "/*"
+          else
+            echo "CLOUDFRONT_DISTRIBUTION_ID unset — S3 synced without invalidation"
+          fi
+
+      - name: Smoke health check
+        if: vars.API_BASE_URL != ''
+        run: |
+          curl -fsS "${{ vars.API_BASE_URL }}/health" | tee /tmp/health.json
+          grep -q '"status":"ok"' /tmp/health.json || grep -q '"status": "ok"' /tmp/health.json

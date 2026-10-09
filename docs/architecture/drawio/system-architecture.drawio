@@ -1,0 +1,143 @@
+<mxfile host="app.diagrams.net" modified="2026-10-09T17:00:00.000Z" agent="InfraPilot AI Docs" version="22.1.0" type="device">
+  <diagram id="system-architecture" name="System Architecture">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Title -->
+        <mxCell id="title" value="InfraPilot AI — System Architecture&#xa;(Design / evaluate / optimize AWS architectures — does NOT deploy IaC)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontStyle=1;fontSize=18;" vertex="1" parent="1">
+          <mxGeometry x="320" y="20" width="900" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="legend" value="Legend: solid = Implemented · dashed = Planned / optional · orange border = Trust boundary" style="text;html=1;strokeColor=none;fillColor=none;align=left;fontSize=11;fontColor=#666666;" vertex="1" parent="1">
+          <mxGeometry x="40" y="60" width="700" height="24" as="geometry"/>
+        </mxCell>
+
+        <!-- TRUST: Client -->
+        <mxCell id="tb-client" value="Trust boundary: End-user browser" style="swimlane;startSize=28;fillColor=#FFF8E1;strokeColor=#F9A825;strokeWidth=2;dashed=0;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="200" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="browser" value="Browser&#xa;(Vite React SPA)&#xa;[PLANNED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=12;" vertex="1" parent="tb-client">
+          <mxGeometry x="30" y="50" width="140" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- TRUST: Edge / CDN -->
+        <mxCell id="tb-edge" value="Trust boundary: Public edge (AWS account)" style="swimlane;startSize=28;fillColor=#FFF8E1;strokeColor=#F9A825;strokeWidth=2;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="300" y="100" width="320" height="160" as="geometry"/>
+        </mxCell>
+        <mxCell id="cloudfront" value="CloudFront&#xa;(HTTPS, cache)&#xa;[PLANNED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;dashed=1;fontSize=12;" vertex="1" parent="tb-edge">
+          <mxGeometry x="20" y="50" width="130" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="s3-frontend" value="S3 static site&#xa;(Vite build dist/)&#xa;[PLANNED]" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#E8F5E9;strokeColor=#2E7D32;dashed=1;fontSize=11;" vertex="1" parent="tb-edge">
+          <mxGeometry x="170" y="45" width="130" height="90" as="geometry"/>
+        </mxCell>
+
+        <!-- TRUST: API -->
+        <mxCell id="tb-api" value="Trust boundary: API tier (AWS account)" style="swimlane;startSize=28;fillColor=#FFF8E1;strokeColor=#F9A825;strokeWidth=2;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="680" y="100" width="360" height="200" as="geometry"/>
+        </mxCell>
+        <mxCell id="apigw" value="API Gateway&#xa;HTTP API&#xa;[PLANNED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;dashed=1;fontSize=12;" vertex="1" parent="tb-api">
+          <mxGeometry x="30" y="55" width="130" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="lambda" value="Lambda&#xa;FastAPI + Mangum&#xa;handler: app.lambda_handler&#xa;[IMPLEMENTED code;&#xa;deploy PLANNED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=11;" vertex="1" parent="tb-api">
+          <mxGeometry x="190" y="40" width="140" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- TRUST: Data / AI -->
+        <mxCell id="tb-data" value="Trust boundary: Data &amp; AI services (same AWS account)" style="swimlane;startSize=28;fillColor=#FFF8E1;strokeColor=#F9A825;strokeWidth=2;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="40" y="360" width="1000" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="bedrock" value="Amazon Bedrock&#xa;Claude (Haiku default)&#xa;architecture / gap / optimize&#xa;[IMPLEMENTED client;&#xa;needs model access]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=11;" vertex="1" parent="tb-data">
+          <mxGeometry x="30" y="50" width="180" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="s3-artifacts" value="S3 artifacts bucket&#xa;uploads, drawio, exports&#xa;[IMPLEMENTED service;&#xa;bucket PLANNED]" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=11;" vertex="1" parent="tb-data">
+          <mxGeometry x="260" y="50" width="180" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="ddb" value="DynamoDB&#xa;projects metadata&#xa;[IMPLEMENTED service;&#xa;table PLANNED]" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=10;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=11;" vertex="1" parent="tb-data">
+          <mxGeometry x="490" y="50" width="180" height="130" as="geometry"/>
+        </mxCell>
+        <mxCell id="cw" value="CloudWatch&#xa;Logs + Metrics&#xa;[PLANNED ops]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;dashed=1;fontSize=11;" vertex="1" parent="tb-data">
+          <mxGeometry x="720" y="55" width="160" height="120" as="geometry"/>
+        </mxCell>
+
+        <!-- Optional / local -->
+        <mxCell id="tb-local" value="Optional / local (no AWS)" style="swimlane;startSize=28;fillColor=#F3E5F5;strokeColor=#7B1FA2;strokeWidth=2;dashed=1;fontStyle=1;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="1100" y="100" width="280" height="480" as="geometry"/>
+        </mxCell>
+        <mxCell id="demo" value="DEMO_MODE&#xa;local JSON + files&#xa;mock Bedrock&#xa;[IMPLEMENTED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=12;" vertex="1" parent="tb-local">
+          <mxGeometry x="40" y="50" width="200" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="uvicorn" value="Local uvicorn&#xa;FastAPI /health&#xa;[IMPLEMENTED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=12;" vertex="1" parent="tb-local">
+          <mxGeometry x="40" y="180" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="vite-dev" value="Vite dev server&#xa;:5173 CORS&#xa;[PLANNED frontend]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#7B1FA2;dashed=1;fontSize=12;" vertex="1" parent="tb-local">
+          <mxGeometry x="40" y="290" width="200" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="rules" value="Rules engine + agent&#xa;packages (repo root)&#xa;[IMPLEMENTED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E1BEE7;strokeColor=#7B1FA2;fontSize=12;" vertex="1" parent="tb-local">
+          <mxGeometry x="40" y="400" width="200" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;endArrow=classic;strokeWidth=2;" edge="1" parent="1" source="browser" target="cloudfront">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e1l" value="HTTPS" style="edgeLabel;html=1;align=center;fontSize=10;" vertex="1" connectable="0" parent="e1">
+          <mxGeometry x="-0.1" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+        <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeWidth=2;dashed=1;" edge="1" parent="1" source="cloudfront" target="s3-frontend">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeWidth=2;dashed=1;" edge="1" parent="1" source="browser" target="apigw">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="140" y="300"/>
+              <mxPoint x="760" y="300"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e3l" value="REST /api/v1 (CORS)" style="edgeLabel;html=1;align=center;fontSize=10;" vertex="1" connectable="0" parent="e3">
+          <mxGeometry x="-0.2" relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry>
+        </mxCell>
+        <mxCell id="e4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeWidth=2;" edge="1" parent="1" source="apigw" target="lambda">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeWidth=2;" edge="1" parent="1" source="lambda" target="bedrock">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="940" y="340"/>
+              <mxPoint x="160" y="340"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeWidth=2;" edge="1" parent="1" source="lambda" target="s3-artifacts">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="940" y="330"/>
+              <mxPoint x="390" y="330"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeWidth=2;" edge="1" parent="1" source="lambda" target="ddb">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="940" y="320"/>
+              <mxPoint x="620" y="320"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=classic;strokeWidth=2;dashed=1;" edge="1" parent="1" source="lambda" target="cw">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="940" y="310"/>
+              <mxPoint x="840" y="310"/>
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="notes" value="Notes: Frontend hosting (CloudFront/S3) and API Gateway wiring are PLANNED. FastAPI+Mangum, Bedrock client, storage adapters, rules/agent pipeline are IMPLEMENTED in repo. Local DEMO_MODE uses filesystem + mocks when AWS creds/config absent." style="text;html=1;strokeColor=#BDBDBD;fillColor=#FAFAFA;align=left;verticalAlign=top;spacing=8;fontSize=11;whiteSpace=wrap;" vertex="1" parent="1">
+          <mxGeometry x="40" y="620" width="1000" height="70" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

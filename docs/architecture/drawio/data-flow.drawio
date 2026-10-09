@@ -1,0 +1,88 @@
+<mxfile host="app.diagrams.net" modified="2026-10-09T17:00:00.000Z" agent="InfraPilot AI Docs" version="22.1.0" type="device">
+  <diagram id="data-flow" name="Data Flow">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1500" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="InfraPilot AI — Data Flow&#xa;User inputs → architecture JSON → Draw.io XML → evaluation findings → exports" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontStyle=1;fontSize=16;" vertex="1" parent="1">
+          <mxGeometry x="150" y="20" width="1100" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Inputs -->
+        <mxCell id="in-box" value="Inputs" style="swimlane;startSize=26;fillColor=#E3F2FD;strokeColor=#1565C0;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="280" height="280" as="geometry"/>
+        </mxCell>
+        <mxCell id="in1" value="Requirements form&#xa;(purpose, workload,&#xa;traffic, sensitivity,&#xa;availability, budget,&#xa;region, constraints)&#xa;[IMPLEMENTED schema]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=11;" vertex="1" parent="in-box">
+          <mxGeometry x="20" y="40" width="240" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="in2" value="Upload Draw.io XML&#xa;or architecture JSON&#xa;[IMPLEMENTED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#BBDEFB;strokeColor=#1565C0;fontSize=11;" vertex="1" parent="in-box">
+          <mxGeometry x="20" y="160" width="240" height="70" as="geometry"/>
+        </mxCell>
+
+        <!-- Core artifacts -->
+        <mxCell id="core" value="Core artifacts" style="swimlane;startSize=26;fillColor=#E8F5E9;strokeColor=#2E7D32;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="400" y="100" width="320" height="400" as="geometry"/>
+        </mxCell>
+        <mxCell id="c1" value="Requirements JSON&#xa;(Pydantic model)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=12;" vertex="1" parent="core">
+          <mxGeometry x="40" y="45" width="240" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="c2" value="Architecture JSON&#xa;nodes[{id,service_id,label,props}]&#xa;edges[{from,to,label}]&#xa;metadata" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=11;" vertex="1" parent="core">
+          <mxGeometry x="40" y="120" width="240" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="c3" value="Draw.io XML&#xa;(mxfile / mxGraphModel)&#xa;generated or parsed" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=11;" vertex="1" parent="core">
+          <mxGeometry x="40" y="220" width="240" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="c4" value="Project record&#xa;DynamoDB or local data/&#xa;[IMPLEMENTED adapter]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=11;" vertex="1" parent="core">
+          <mxGeometry x="40" y="310" width="240" height="60" as="geometry"/>
+        </mxCell>
+
+        <!-- Evaluation -->
+        <mxCell id="eval" value="Evaluation" style="swimlane;startSize=26;fillColor=#FFF3E0;strokeColor=#EF6C00;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="100" width="280" height="280" as="geometry"/>
+        </mxCell>
+        <mxCell id="ev1" value="Rule findings&#xa;status, category,&#xa;message, remediation&#xa;[IMPLEMENTED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#EF6C00;fontSize=11;" vertex="1" parent="eval">
+          <mxGeometry x="20" y="45" width="240" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="ev2" value="ScoreReport&#xa;security / cost /&#xa;reliability / scale /&#xa;best_practices + overall" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFE0B2;strokeColor=#EF6C00;fontSize=11;" vertex="1" parent="eval">
+          <mxGeometry x="20" y="140" width="240" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Exports -->
+        <mxCell id="exp" value="Exports" style="swimlane;startSize=26;fillColor=#FCE4EC;strokeColor=#C2185B;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1140" y="100" width="240" height="320" as="geometry"/>
+        </mxCell>
+        <mxCell id="ex1" value="Architecture JSON&#xa;download" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8BBD0;strokeColor=#C2185B;fontSize=11;" vertex="1" parent="exp">
+          <mxGeometry x="30" y="45" width="180" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="ex2" value="Draw.io XML&#xa;download" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8BBD0;strokeColor=#C2185B;fontSize=11;" vertex="1" parent="exp">
+          <mxGeometry x="30" y="110" width="180" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="ex3" value="Evaluation / report&#xa;JSON or XLSX&#xa;[IMPLEMENTED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8BBD0;strokeColor=#C2185B;fontSize=11;" vertex="1" parent="exp">
+          <mxGeometry x="30" y="175" width="180" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="ex4" value="Optimization plan&#xa;JSON [IMPLEMENTED]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8BBD0;strokeColor=#C2185B;fontSize=11;" vertex="1" parent="exp">
+          <mxGeometry x="30" y="250" width="180" height="45" as="geometry"/>
+        </mxCell>
+
+        <!-- Storage note -->
+        <mxCell id="store" value="Persistence: DEMO_MODE → backend/data/projects + files. AWS mode → DynamoDB (project docs) + S3 (uploads/exports). No customer secrets should be stored in architecture JSON." style="rounded=0;whiteSpace=wrap;html=1;fillColor=#FAFAFA;strokeColor=#9E9E9E;align=left;spacing=8;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="40" y="560" width="1040" height="55" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges -->
+        <mxCell id="d1" style="endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="in1" target="c1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="d2" style="endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="in2" target="c3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="d3" style="endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="c1" target="c2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="d4" style="endArrow=classic;html=1;strokeWidth=1;startArrow=classic;" edge="1" parent="1" source="c2" target="c3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="d4l" value="build / parse" style="edgeLabel;html=1;fontSize=10;" vertex="1" connectable="0" parent="d4"><mxGeometry relative="1" as="geometry"><mxPoint as="offset"/></mxGeometry></mxCell>
+        <mxCell id="d5" style="endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="c2" target="ev1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="d6" style="endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="ev1" target="ev2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="d7" style="endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="c2" target="ex1"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="d8" style="endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="c3" target="ex2"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="d9" style="endArrow=classic;strokeWidth=2;html=1;" edge="1" parent="1" source="ev2" target="ex3"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="d10" style="endArrow=classic;strokeWidth=1;dashed=1;html=1;" edge="1" parent="1" source="c2" target="c4"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

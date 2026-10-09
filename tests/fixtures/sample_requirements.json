@@ -1,0 +1,13 @@
+{
+  "purpose": "Simple public web application with authenticated API",
+  "workload": "web",
+  "traffic": "medium",
+  "data_sensitivity": "internal",
+  "availability": "high",
+  "recovery": "RPO < 1h",
+  "budget": "moderate",
+  "region": "us-east-1",
+  "scalability": "moderate",
+  "constraints": ["No on-prem", "Prefer serverless"],
+  "notes": "SAMPLE DATA"
+}

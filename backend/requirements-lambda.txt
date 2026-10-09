@@ -1,0 +1,10 @@
+# Lambda runtime deps only (no uvicorn). Use Linux wheels when packaging.
+fastapi>=0.110.0
+mangum>=0.17.0
+pydantic>=2.6.0
+pydantic-settings>=2.2.0
+boto3>=1.34.0
+python-multipart>=0.0.9
+openpyxl>=3.1.2
+pillow>=10.2.0
+defusedxml>=0.7.1

@@ -1,0 +1,99 @@
+{
+  "name": "SAMPLE: Serverless Web App",
+  "source": "sample",
+  "confirmed": false,
+  "metadata": {"region": "us-east-1", "pattern": "serverless-web"},
+  "nodes": [
+    {
+      "id": "n-cloudfront",
+      "service_id": "cloudfront",
+      "label": "CloudFront CDN",
+      "props": {"caching": true},
+      "x": 100,
+      "y": 80
+    },
+    {
+      "id": "n-s3",
+      "service_id": "s3",
+      "label": "Static Assets Bucket",
+      "props": {"encryption": "AES256", "public": false},
+      "x": 100,
+      "y": 220
+    },
+    {
+      "id": "n-apigw",
+      "service_id": "api_gateway",
+      "label": "API Gateway",
+      "props": {"auth": "cognito"},
+      "x": 320,
+      "y": 80
+    },
+    {
+      "id": "n-lambda",
+      "service_id": "lambda",
+      "label": "API Lambda",
+      "props": {"runtime": "python3.12"},
+      "x": 320,
+      "y": 220
+    },
+    {
+      "id": "n-ddb",
+      "service_id": "dynamodb",
+      "label": "App Table",
+      "props": {"capacity_mode": "on-demand", "encryption": true, "pit_recovery": true},
+      "x": 540,
+      "y": 220
+    },
+    {
+      "id": "n-vpc",
+      "service_id": "vpc",
+      "label": "Application VPC",
+      "props": {"multi_az": true},
+      "x": 320,
+      "y": 360
+    },
+    {
+      "id": "n-iam",
+      "service_id": "iam",
+      "label": "Least-Privilege Roles",
+      "props": {"wildcard_actions": false},
+      "x": 540,
+      "y": 80
+    },
+    {
+      "id": "n-cw",
+      "service_id": "cloudwatch",
+      "label": "CloudWatch",
+      "props": {"alarms": true},
+      "x": 540,
+      "y": 360
+    },
+    {
+      "id": "n-cognito",
+      "service_id": "cognito",
+      "label": "User Pool",
+      "props": {},
+      "x": 100,
+      "y": 360
+    },
+    {
+      "id": "n-waf",
+      "service_id": "waf",
+      "label": "AWS WAF",
+      "props": {},
+      "x": 100,
+      "y": 0
+    }
+  ],
+  "edges": [
+    {"id": "e1", "from": "n-waf", "to": "n-cloudfront", "label": "protect"},
+    {"id": "e2", "from": "n-cloudfront", "to": "n-s3", "label": "OAC"},
+    {"id": "e3", "from": "n-cloudfront", "to": "n-apigw", "label": "API"},
+    {"id": "e4", "from": "n-apigw", "to": "n-lambda", "label": "invoke"},
+    {"id": "e5", "from": "n-lambda", "to": "n-ddb", "label": "CRUD"},
+    {"id": "e6", "from": "n-lambda", "to": "n-vpc", "label": "ENI"},
+    {"id": "e7", "from": "n-iam", "to": "n-lambda", "label": "role"},
+    {"id": "e8", "from": "n-cognito", "to": "n-apigw", "label": "authorizer"},
+    {"id": "e9", "from": "n-cw", "to": "n-lambda", "label": "metrics"}
+  ]
+}

@@ -1,0 +1,70 @@
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.p12
+*.key
+credentials.json
+.aws/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+dist/
+build/
+.venv/
+venv/
+ENV/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+.tox/
+*.egg
+
+# Backend local data
+backend/data/
+data/projects/
+data/files/
+
+# Node / frontend
+node_modules/
+frontend/dist/
+frontend/.vite/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# AWS SAM / packaging
+.aws-sam/
+samconfig.toml
+*.zip
+/tmp/
+packaged.yaml
+
+# IDE / OS
+.idea/
+.vscode/
+*.swp
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Cursor / local agent
+.cursor/
+
+# Generated archives
+*.tar.gz
+
+deploy-outputs.txt
+
+deploy-log.txt
+
+deploy-outputs.txt
+deploy-log.txt
+

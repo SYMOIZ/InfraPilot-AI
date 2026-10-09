@@ -1,0 +1,144 @@
+{
+  "services": [
+    {
+      "id": "ec2",
+      "name": "Amazon EC2",
+      "category": "compute",
+      "description": "Virtual servers in the cloud",
+      "drawio_style": "shape=mxgraph.aws4.ec2;fillColor=#ED7100;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "s3",
+      "name": "Amazon S3",
+      "category": "storage",
+      "description": "Object storage built to store and retrieve any amount of data",
+      "drawio_style": "shape=mxgraph.aws4.s3;fillColor=#7AA116;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "lambda",
+      "name": "AWS Lambda",
+      "category": "compute",
+      "description": "Run code without thinking about servers",
+      "drawio_style": "shape=mxgraph.aws4.lambda;fillColor=#ED7100;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "api_gateway",
+      "name": "Amazon API Gateway",
+      "category": "networking",
+      "description": "Create, publish, maintain, and secure APIs",
+      "drawio_style": "shape=mxgraph.aws4.api_gateway;fillColor=#8C4FFF;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "alb",
+      "name": "Application Load Balancer",
+      "category": "networking",
+      "description": "Distribute incoming application traffic",
+      "drawio_style": "shape=mxgraph.aws4.application_load_balancer;fillColor=#8C4FFF;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "rds",
+      "name": "Amazon RDS",
+      "category": "database",
+      "description": "Managed relational database service",
+      "drawio_style": "shape=mxgraph.aws4.rds;fillColor=#C925D1;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "dynamodb",
+      "name": "Amazon DynamoDB",
+      "category": "database",
+      "description": "Fast and flexible NoSQL database",
+      "drawio_style": "shape=mxgraph.aws4.dynamodb;fillColor=#C925D1;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "vpc",
+      "name": "Amazon VPC",
+      "category": "networking",
+      "description": "Provision a logically isolated section of AWS",
+      "drawio_style": "shape=mxgraph.aws4.vpc;fillColor=#8C4FFF;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "iam",
+      "name": "AWS IAM",
+      "category": "security",
+      "description": "Securely manage access to AWS services and resources",
+      "drawio_style": "shape=mxgraph.aws4.identity_and_access_management;fillColor=#DD344C;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "cloudfront",
+      "name": "Amazon CloudFront",
+      "category": "networking",
+      "description": "Fast content delivery network (CDN)",
+      "drawio_style": "shape=mxgraph.aws4.cloudfront;fillColor=#8C4FFF;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "sqs",
+      "name": "Amazon SQS",
+      "category": "integration",
+      "description": "Fully managed message queuing",
+      "drawio_style": "shape=mxgraph.aws4.sqs;fillColor=#E7157B;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "sns",
+      "name": "Amazon SNS",
+      "category": "integration",
+      "description": "Fully managed pub/sub messaging",
+      "drawio_style": "shape=mxgraph.aws4.sns;fillColor=#E7157B;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "cloudwatch",
+      "name": "Amazon CloudWatch",
+      "category": "management",
+      "description": "Observability of AWS resources and applications",
+      "drawio_style": "shape=mxgraph.aws4.cloudwatch;fillColor=#E7157B;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "ecs",
+      "name": "Amazon ECS",
+      "category": "compute",
+      "description": "Fully managed container orchestration",
+      "drawio_style": "shape=mxgraph.aws4.ecs;fillColor=#ED7100;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "eks",
+      "name": "Amazon EKS",
+      "category": "compute",
+      "description": "Managed Kubernetes service",
+      "drawio_style": "shape=mxgraph.aws4.eks;fillColor=#ED7100;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "step_functions",
+      "name": "AWS Step Functions",
+      "category": "integration",
+      "description": "Visual workflows for distributed applications",
+      "drawio_style": "shape=mxgraph.aws4.step_functions;fillColor=#E7157B;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "waf",
+      "name": "AWS WAF",
+      "category": "security",
+      "description": "Web application firewall",
+      "drawio_style": "shape=mxgraph.aws4.waf;fillColor=#DD344C;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "secrets_manager",
+      "name": "AWS Secrets Manager",
+      "category": "security",
+      "description": "Rotate, manage, and retrieve secrets",
+      "drawio_style": "shape=mxgraph.aws4.secrets_manager;fillColor=#DD344C;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "kms",
+      "name": "AWS KMS",
+      "category": "security",
+      "description": "Create and manage cryptographic keys",
+      "drawio_style": "shape=mxgraph.aws4.key_management_service;fillColor=#DD344C;strokeColor=#ffffff;fontColor=#ffffff;"
+    },
+    {
+      "id": "cognito",
+      "name": "Amazon Cognito",
+      "category": "security",
+      "description": "User identity and access management",
+      "drawio_style": "shape=mxgraph.aws4.cognito;fillColor=#DD344C;strokeColor=#ffffff;fontColor=#ffffff;"
+    }
+  ]
+}
