@@ -1,4 +1,5 @@
 import type {
+  Architecture,
   ClarificationRequest,
   ClarificationResponse,
   CompareResponse,
@@ -194,6 +195,12 @@ export const api = {
     request<Project>(`/api/v1/projects/${id}/confirm-architecture`, {
       method: 'POST',
       body: JSON.stringify(body),
+    }),
+
+  putArchitecture: (id: string, architecture: Architecture) =>
+    request<Project>(`/api/v1/projects/${id}/architecture`, {
+      method: 'PUT',
+      body: JSON.stringify(architecture),
     }),
 
   evaluate: (id: string) =>

@@ -14,8 +14,8 @@ export function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
   const [creating, setCreating] = useState(false)
+  const [blankBusy, setBlankBusy] = useState(false)
   const [demoBusy, setDemoBusy] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<ProjectSummary | null>(null)
   const [deleting, setDeleting] = useState(false)
@@ -27,13 +27,7 @@ export function Dashboard() {
       const list = await api.listProjects()
       setProjects(list)
     } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : err instanceof Error
-            ? err.message
-            : 'Failed to load projects',
-      )
+      setError(errMessage(err))
     } finally {
       setLoading(false)
     }
@@ -62,17 +56,11 @@ export function Dashboard() {
         })
         if (!cancelled) {
           setSearchParams({}, { replace: true })
-          navigate(`/projects/${project.id}?step=architecture`)
+          navigate(`/studio/${project.id}`)
         }
       } catch (err) {
         if (!cancelled) {
-          setError(
-            err instanceof ApiError
-              ? err.message
-              : err instanceof Error
-                ? err.message
-                : 'Demo setup failed',
-          )
+          setError(errMessage(err))
           setSearchParams({}, { replace: true })
         }
       } finally {
@@ -90,21 +78,28 @@ export function Dashboard() {
     setCreating(true)
     setError(null)
     try {
-      const project = await api.createProject({
-        name: name.trim(),
-        description: description.trim() || null,
-      })
-      navigate(`/projects/${project.id}`)
+      const project = await api.createProject({ name: name.trim() })
+      navigate(`/studio/${project.id}`)
     } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : err instanceof Error
-            ? err.message
-            : 'Could not create project',
-      )
+      setError(errMessage(err))
     } finally {
       setCreating(false)
+    }
+  }
+
+  async function createBlank() {
+    setBlankBusy(true)
+    setError(null)
+    try {
+      const project = await api.createProject({
+        name: 'Blank architecture',
+        description: 'Hand-drawn diagram',
+      })
+      navigate(`/studio/${project.id}`)
+    } catch (err) {
+      setError(errMessage(err))
+    } finally {
+      setBlankBusy(false)
     }
   }
 
@@ -116,62 +111,55 @@ export function Dashboard() {
       setDeleteTarget(null)
       await load()
     } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : err instanceof Error
-            ? err.message
-            : 'Delete failed',
-      )
+      setError(errMessage(err))
       setDeleteTarget(null)
     } finally {
       setDeleting(false)
     }
   }
 
-  const recentReports = projects.filter((p) => p.has_evaluation)
-
   return (
     <div>
       <div className="section-head anim-rise">
         <div>
-          <h1>Dashboard</h1>
-          <p>Create a project, continue a workflow, or open recent evaluation reports.</p>
+          <h1>Projects</h1>
+          <p>Open a blank canvas or continue an existing architecture.</p>
         </div>
-        {isDemoMode() ? (
+        <div className="cta-row">
           <button
             type="button"
-            className="btn btn-secondary"
-            disabled={demoBusy}
-            onClick={() => setSearchParams({ demo: '1' })}
+            className="btn"
+            disabled={blankBusy}
+            onClick={() => void createBlank()}
           >
-            {demoBusy ? 'Opening demo…' : 'Open demo'}
+            {blankBusy ? 'Creating…' : 'New blank architecture'}
           </button>
-        ) : null}
+          {isDemoMode() ? (
+            <button
+              type="button"
+              className="btn btn-secondary"
+              disabled={demoBusy}
+              onClick={() => setSearchParams({ demo: '1' })}
+            >
+              {demoBusy ? 'Opening demo…' : 'Open demo'}
+            </button>
+          ) : null}
+        </div>
       </div>
 
       <form className="create-bar panel anim-rise anim-delay-1" onSubmit={handleCreate}>
         <div className="field">
-          <label htmlFor="project-name">Project name</label>
+          <label htmlFor="project-name">Or name a new project</label>
           <input
             id="project-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="e.g. Checkout API redesign"
+            placeholder="e.g. Checkout API"
             required
           />
         </div>
-        <div className="field">
-          <label htmlFor="project-desc">Description (optional)</label>
-          <input
-            id="project-desc"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Short context"
-          />
-        </div>
-        <button type="submit" className="btn" disabled={creating || !name.trim()}>
-          {creating ? 'Creating…' : 'Create project'}
+        <button type="submit" className="btn btn-secondary" disabled={creating || !name.trim()}>
+          {creating ? 'Creating…' : 'Create & open studio'}
         </button>
       </form>
 
@@ -181,17 +169,27 @@ export function Dashboard() {
       {!loading && !error && projects.length === 0 ? (
         <EmptyState
           title="No projects yet"
-          description="Create your first project to capture requirements and generate an architecture."
+          description="Create a blank architecture and drag AWS services onto the canvas."
         />
       ) : null}
 
       {!loading && projects.length > 0 ? (
         <section className="anim-rise anim-delay-2" aria-labelledby="projects-heading">
-          <h2 id="projects-heading">Projects</h2>
+          <h2 id="projects-heading">Your diagrams</h2>
           <div className="project-list">
             {projects.map((p) => (
               <div key={p.id} className="panel panel-interactive project-row">
-                <Link to={`/projects/${p.id}`} className="project-row" style={{ flex: 1, padding: 0, border: 0, boxShadow: 'none', background: 'transparent' }}>
+                <Link
+                  to={`/studio/${p.id}`}
+                  className="project-row"
+                  style={{
+                    flex: 1,
+                    padding: 0,
+                    border: 0,
+                    boxShadow: 'none',
+                    background: 'transparent',
+                  }}
+                >
                   <div>
                     <strong>{p.name}</strong>
                     {p.description ? (
@@ -203,11 +201,10 @@ export function Dashboard() {
                       Updated {new Date(p.updated_at).toLocaleString()}
                     </p>
                   </div>
-                  <div className="project-meta" aria-label="Progress">
-                    <span className={`chip${p.has_requirements ? ' on' : ''}`}>Requirements</span>
-                    <span className={`chip${p.has_architecture ? ' on' : ''}`}>Architecture</span>
-                    <span className={`chip${p.has_evaluation ? ' on' : ''}`}>Evaluation</span>
-                    <span className={`chip${p.has_optimization ? ' on' : ''}`}>Optimize</span>
+                  <div className="project-meta" aria-label="Status">
+                    <span className={`chip${p.has_architecture ? ' on' : ''}`}>Diagram</span>
+                    <span className={`chip${p.has_evaluation ? ' on' : ''}`}>Evaluated</span>
+                    <span className={`chip${p.has_optimization ? ' on' : ''}`}>Optimized</span>
                   </div>
                 </Link>
                 <button
@@ -219,28 +216,6 @@ export function Dashboard() {
                   Delete
                 </button>
               </div>
-            ))}
-          </div>
-        </section>
-      ) : null}
-
-      {!loading && recentReports.length > 0 ? (
-        <section style={{ marginTop: '2rem' }} aria-labelledby="reports-heading">
-          <h2 id="reports-heading">Recent reports</h2>
-          <div className="project-list">
-            {recentReports.map((p) => (
-              <Link
-                key={`report-${p.id}`}
-                to={`/projects/${p.id}?step=report`}
-                className="panel panel-interactive project-row"
-              >
-                <div>
-                  <strong>{p.name}</strong>
-                  <p className="muted" style={{ margin: '0.2rem 0 0' }}>
-                    Open evaluation report
-                  </p>
-                </div>
-              </Link>
             ))}
           </div>
         </section>
@@ -261,4 +236,10 @@ export function Dashboard() {
       />
     </div>
   )
+}
+
+function errMessage(err: unknown): string {
+  if (err instanceof ApiError) return err.message
+  if (err instanceof Error) return err.message
+  return 'Something went wrong'
 }

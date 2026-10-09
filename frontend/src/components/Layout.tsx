@@ -1,6 +1,17 @@
-import { Link, Outlet } from 'react-router-dom'
+import { Link, Outlet, useLocation } from 'react-router-dom'
 
 export function Layout() {
+  const { pathname } = useLocation()
+  const isStudio = pathname.startsWith('/studio/')
+
+  if (isStudio) {
+    return (
+      <div className="app-shell studio-mode">
+        <Outlet />
+      </div>
+    )
+  }
+
   return (
     <div className="app-shell">
       <header className="app-header">

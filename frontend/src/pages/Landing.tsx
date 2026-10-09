@@ -1,8 +1,33 @@
-import { Link } from 'react-router-dom'
-import { isDemoMode } from '../api/client'
+import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { api, ApiError, isDemoMode } from '../api/client'
 
 export function Landing() {
-  const demo = isDemoMode()
+  const navigate = useNavigate()
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  async function openBlank() {
+    setBusy(true)
+    setError(null)
+    try {
+      const project = await api.createProject({
+        name: 'Blank architecture',
+        description: 'Hand-drawn diagram',
+      })
+      navigate(`/studio/${project.id}`)
+    } catch (err) {
+      setError(
+        err instanceof ApiError
+          ? err.message
+          : err instanceof Error
+            ? err.message
+            : 'Could not create project',
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
 
   return (
     <section className="landing">
@@ -11,51 +36,32 @@ export function Landing() {
           InfraPilot <em>AI</em>
         </h1>
         <p className="lede">
-          Turn business requirements into evaluated AWS architectures — with
-          gap analysis, optimization, and exportable reports.
+          Draw AWS architectures by hand on a canvas. Optionally ask the agent to propose,
+          evaluate, or optimize.
         </p>
         <div className="cta-row anim-rise anim-delay-1">
           <Link to="/dashboard" className="btn">
-            Start project
+            Open studio
           </Link>
-          {demo ? (
-            <Link to="/dashboard?demo=1" className="btn btn-secondary">
-              Open demo
+          <button
+            type="button"
+            className="btn btn-secondary"
+            disabled={busy}
+            onClick={() => void openBlank()}
+          >
+            {busy ? 'Creating…' : 'New blank diagram'}
+          </button>
+          {isDemoMode() ? (
+            <Link to="/dashboard?demo=1" className="btn btn-ghost">
+              Load demo
             </Link>
           ) : null}
         </div>
-      </div>
-
-      <div className="landing-visual anim-fade anim-delay-2" aria-hidden="true">
-        <svg className="hero-svg" viewBox="0 0 420 280" role="presentation">
-          <line className="edge" x1="90" y1="70" x2="210" y2="140" pathLength={1} />
-          <line className="edge" x1="210" y1="140" x2="330" y2="70" pathLength={1} />
-          <line className="edge" x1="210" y1="140" x2="210" y2="220" pathLength={1} />
-          <g className="pulse">
-            <rect className="node-rect" x="30" y="45" width="120" height="50" rx="6" />
-            <text className="node-label" x="48" y="75">
-              Edge / CDN
-            </text>
-          </g>
-          <g className="pulse" style={{ animationDelay: '0.15s' }}>
-            <rect className="node-rect" x="150" y="115" width="120" height="50" rx="6" />
-            <text className="node-label" x="168" y="145">
-              Compute
-            </text>
-          </g>
-          <g className="pulse" style={{ animationDelay: '0.3s' }}>
-            <rect className="node-rect" x="270" y="45" width="120" height="50" rx="6" />
-            <text className="node-label" x="292" y="75">
-              Auth
-            </text>
-          </g>
-          <g className="pulse" style={{ animationDelay: '0.45s' }}>
-            <rect className="node-rect" x="150" y="195" width="120" height="50" rx="6" />
-            <text className="node-label" x="178" y="225">
-              Data
-            </text>
-          </g>
-        </svg>
+        {error ? (
+          <p role="alert" style={{ color: 'var(--fail)', marginTop: '1rem' }}>
+            {error}
+          </p>
+        ) : null}
       </div>
     </section>
   )

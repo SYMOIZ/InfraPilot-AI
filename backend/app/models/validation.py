@@ -38,8 +38,7 @@ def validate_architecture(architecture: Architecture) -> Tuple[bool, List[str]]:
     catalog_ids = load_catalog_service_ids()
     node_ids = {n.id for n in architecture.nodes}
 
-    if not architecture.nodes:
-        errors.append("Architecture must contain at least one node")
+    # Empty graphs are allowed (hand-drawn blank studio canvas).
 
     seen: Set[str] = set()
     for node in architecture.nodes:

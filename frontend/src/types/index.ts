@@ -166,6 +166,7 @@ export interface ConfirmArchitectureRequest {
 
 export interface GenerateRequest {
   regenerate?: boolean
+  prompt?: string | null
 }
 
 export interface ReportResponse {

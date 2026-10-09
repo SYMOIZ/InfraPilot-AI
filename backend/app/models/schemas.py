@@ -259,6 +259,7 @@ class ConfirmArchitectureRequest(BaseModel):
 
 class GenerateRequest(BaseModel):
     regenerate: bool = False
+    prompt: Optional[str] = None
 
 
 class ReportResponse(BaseModel):

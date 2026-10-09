@@ -130,8 +130,50 @@ def test_upload_malformed_drawio(client, malformed_drawio_xml):
     assert r.status_code == 400
 
 
-def test_generate_requires_requirements(client):
+def test_generate_without_requirements_uses_prompt(client):
+    """Agent assist may generate without a full requirements form."""
     r = client.post("/api/v1/projects", json={"name": "No Req"})
     pid = r.json()["id"]
-    r = client.post(f"/api/v1/projects/{pid}/generate")
-    assert r.status_code == 400
+    r = client.post(
+        f"/api/v1/projects/{pid}/generate",
+        json={"prompt": "Simple serverless API with DynamoDB"},
+    )
+    assert r.status_code == 200
+    body = r.json()
+    assert body.get("architecture") is not None
+    assert len(body["architecture"]["nodes"]) >= 1
+
+
+def test_put_architecture_hand_drawn(client):
+    r = client.post("/api/v1/projects", json={"name": "Hand Draw"})
+    pid = r.json()["id"]
+    arch = {
+        "id": "arch-hand",
+        "name": "Hand",
+        "nodes": [
+            {
+                "id": "n1",
+                "service_id": "lambda",
+                "label": "API Fn",
+                "props": {},
+                "x": 100,
+                "y": 80,
+            },
+            {
+                "id": "n2",
+                "service_id": "dynamodb",
+                "label": "Table",
+                "props": {},
+                "x": 320,
+                "y": 80,
+            },
+        ],
+        "edges": [{"id": "e1", "from": "n1", "to": "n2", "label": "read/write"}],
+        "confirmed": True,
+        "source": "hand",
+        "metadata": {},
+    }
+    r = client.put(f"/api/v1/projects/{pid}/architecture", json=arch)
+    assert r.status_code == 200
+    assert r.json()["architecture"]["source"] == "hand"
+    assert len(r.json()["architecture"]["nodes"]) == 2
