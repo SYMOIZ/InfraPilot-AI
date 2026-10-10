@@ -26,6 +26,7 @@ export function architectureToFlow(
     source: e.from,
     target: e.to,
     label: e.label ?? undefined,
+    type: 'dataflow',
   }))
 
   return { nodes, edges }

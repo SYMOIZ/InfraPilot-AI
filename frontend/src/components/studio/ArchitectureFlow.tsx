@@ -17,6 +17,7 @@ import {
   useReactFlow,
   type Connection,
   type Edge,
+  type EdgeTypes,
   type NodeTypes,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
@@ -25,9 +26,11 @@ import { getService, type CatalogService } from '../../catalog/services'
 import type { Architecture } from '../../types'
 import { architectureToFlow, flowToArchitecture } from './architectureConvert'
 import { AwsNode, type AwsFlowNode, type AwsNodeData } from './AwsNode'
+import { DataFlowEdge } from './DataFlowEdge'
 import { PALETTE_MIME } from './ServicePalette'
 
 const nodeTypes: NodeTypes = { aws: AwsNode }
+const edgeTypes: EdgeTypes = { dataflow: DataFlowEdge }
 
 function newId(prefix: string): string {
   return `${prefix}_${crypto.randomUUID().slice(0, 8)}`
@@ -89,7 +92,17 @@ function FlowInner({
 
   const onConnect = useCallback(
     (connection: Connection) => {
-      setEdges((eds) => addEdge({ ...connection, id: newId('edge') }, eds))
+      setEdges((eds) =>
+        addEdge(
+          {
+            ...connection,
+            id: newId('edge'),
+            type: 'dataflow',
+            animated: false,
+          },
+          eds,
+        ),
+      )
     },
     [setEdges],
   )
@@ -107,10 +120,15 @@ function FlowInner({
         })()
 
       const id = newId(service.id)
+      const props: Record<string, unknown> = {}
+      if (service.iconUrl) props.icon_url = service.iconUrl
+      if (service.emoji) props.emoji = service.emoji
+      if (service.custom) props.custom = true
+
       const data: AwsNodeData = {
         service_id: service.id,
         label: service.shortLabel,
-        props: {},
+        props,
         onLabelChange,
       }
       const node: AwsFlowNode = {
@@ -150,7 +168,7 @@ function FlowInner({
   const empty = nodes.length === 0
 
   return (
-    <div className="studio-canvas-host">
+    <div className="studio-canvas-host" data-studio-canvas="true">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -160,6 +178,8 @@ function FlowInner({
         onDragOver={onDragOver}
         onDrop={onDrop}
         nodeTypes={nodeTypes}
+        edgeTypes={edgeTypes}
+        defaultEdgeOptions={{ type: 'dataflow' }}
         fitView={syncKey > 0 && nodes.length > 0}
         fitViewOptions={{ padding: 0.2 }}
         deleteKeyCode={['Backspace', 'Delete']}
@@ -177,7 +197,7 @@ function FlowInner({
       </ReactFlow>
       {empty ? (
         <div className="studio-empty" aria-hidden="true">
-          Drag AWS services here to design by hand
+          Drag AWS services here — official icons, connect to see data travel
         </div>
       ) : null}
     </div>

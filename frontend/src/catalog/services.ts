@@ -1,5 +1,8 @@
 /** Static AWS service catalog for the architecture studio palette. */
 
+import { getBuiltinIconUrl } from './iconMap'
+import { loadCustomServices, type CustomService } from './customServices'
+
 export type ServiceCategory =
   | 'compute'
   | 'storage'
@@ -15,6 +18,10 @@ export interface CatalogService {
   shortLabel: string
   category: ServiceCategory
   color: string
+  /** Official AWS icon URL or custom data-URL / emoji raster. */
+  iconUrl?: string
+  emoji?: string
+  custom?: boolean
 }
 
 /** Category accent colors (left bar / chip). */
@@ -39,7 +46,7 @@ export const CATEGORY_LABELS: Record<ServiceCategory, string> = {
 }
 
 /** Catalog ids aligned with backend catalog/aws_services.json */
-export const AWS_SERVICES: CatalogService[] = [
+const AWS_SERVICE_DEFS: Omit<CatalogService, 'iconUrl'>[] = [
   { id: 'ec2', name: 'Amazon EC2', shortLabel: 'EC2', category: 'compute', color: CATEGORY_COLORS.compute },
   { id: 'lambda', name: 'AWS Lambda', shortLabel: 'Lambda', category: 'compute', color: CATEGORY_COLORS.compute },
   { id: 'ecs', name: 'Amazon ECS', shortLabel: 'ECS', category: 'compute', color: CATEGORY_COLORS.compute },
@@ -62,17 +69,37 @@ export const AWS_SERVICES: CatalogService[] = [
   { id: 'cloudwatch', name: 'Amazon CloudWatch', shortLabel: 'CloudWatch', category: 'management', color: CATEGORY_COLORS.management },
 ]
 
-const byId = new Map(AWS_SERVICES.map((s) => [s.id, s]))
+export const AWS_SERVICES: CatalogService[] = AWS_SERVICE_DEFS.map((s) => ({
+  ...s,
+  iconUrl: getBuiltinIconUrl(s.id),
+}))
+
+function allServices(): CatalogService[] {
+  return [...AWS_SERVICES, ...loadCustomServices()]
+}
 
 export function getService(serviceId: string): CatalogService | undefined {
-  return byId.get(serviceId)
+  return allServices().find((s) => s.id === serviceId)
 }
 
 export function getServiceColor(serviceId: string): string {
-  return byId.get(serviceId)?.color ?? '#64748b'
+  return getService(serviceId)?.color ?? '#64748b'
 }
 
-export function servicesByCategory(): { category: ServiceCategory; label: string; services: CatalogService[] }[] {
+export function getServiceIconUrl(
+  serviceId: string,
+  props?: Record<string, unknown> | null,
+): string | undefined {
+  const fromProps = props?.icon_url
+  if (typeof fromProps === 'string' && fromProps) return fromProps
+  return getService(serviceId)?.iconUrl ?? getBuiltinIconUrl(serviceId)
+}
+
+export function servicesByCategory(): {
+  category: ServiceCategory | 'custom'
+  label: string
+  services: CatalogService[]
+}[] {
   const order: ServiceCategory[] = [
     'compute',
     'storage',
@@ -82,11 +109,17 @@ export function servicesByCategory(): { category: ServiceCategory; label: string
     'integration',
     'management',
   ]
-  return order
+  const groups = order
     .map((category) => ({
-      category,
+      category: category as ServiceCategory | 'custom',
       label: CATEGORY_LABELS[category],
       services: AWS_SERVICES.filter((s) => s.category === category),
     }))
     .filter((g) => g.services.length > 0)
+
+  const custom = loadCustomServices() as CustomService[]
+  if (custom.length > 0) {
+    groups.push({ category: 'custom', label: 'Custom tools', services: custom })
+  }
+  return groups
 }

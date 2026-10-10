@@ -1,12 +1,15 @@
+import { AiSupportBadge } from './AiSupportBadge'
+
 interface StudioToolbarProps {
   projectName: string
   saving: boolean
   dirty: boolean
   evaluating: boolean
+  exportingGif: boolean
   agentOpen: boolean
   onSave: () => void
   onEvaluate: () => void
-  onExport: (kind: 'drawio' | 'png' | 'excel') => void
+  onExport: (kind: 'drawio' | 'png' | 'excel' | 'gif') => void
   onToggleAgent: () => void
 }
 
@@ -15,6 +18,7 @@ export function StudioToolbar({
   saving,
   dirty,
   evaluating,
+  exportingGif,
   agentOpen,
   onSave,
   onEvaluate,
@@ -27,6 +31,7 @@ export function StudioToolbar({
         <span className="studio-logo">
           InfraPilot <em>AI</em>
         </span>
+        <AiSupportBadge variant="compact" />
         <span className="studio-project-name" title={projectName}>
           {projectName}
         </span>
@@ -47,7 +52,7 @@ export function StudioToolbar({
           {evaluating ? 'Evaluating…' : 'Evaluate'}
         </button>
         <div className="studio-export-menu">
-          <button type="button" className="btn btn-sm btn-ghost" onClick={() => onExport('drawio')}>
+          <button type="button" className="btn btn-sm btn-ghost">
             Export
           </button>
           <div className="studio-export-dropdown">
@@ -57,6 +62,9 @@ export function StudioToolbar({
             <button type="button" onClick={() => onExport('png')}>
               PNG
             </button>
+            <button type="button" onClick={() => onExport('gif')} disabled={exportingGif}>
+              {exportingGif ? 'GIF…' : 'GIF (data travel)'}
+            </button>
             <button type="button" onClick={() => onExport('excel')}>
               Excel
             </button>
@@ -64,11 +72,16 @@ export function StudioToolbar({
         </div>
         <button
           type="button"
-          className={`btn btn-sm${agentOpen ? '' : ' btn-secondary'}`}
+          className={`btn btn-sm ai-support-toggle${agentOpen ? ' active' : ''}`}
           onClick={onToggleAgent}
           aria-pressed={agentOpen}
+          title="Open official AI Support (Amazon Bedrock)"
         >
-          AI Agent
+          <span className="ai-support-toggle-icon" aria-hidden="true">
+            ✦
+          </span>
+          AI Support
+          {agentOpen ? <span className="ai-support-on">On</span> : null}
         </button>
       </div>
     </header>

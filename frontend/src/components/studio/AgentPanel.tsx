@@ -7,6 +7,7 @@ import type {
   OptimizationChange,
   OptimizationProposal,
 } from '../../types'
+import { AiSupportBadge } from './AiSupportBadge'
 
 type AgentTab = 'assist' | 'evaluate' | 'optimize'
 
@@ -102,16 +103,18 @@ export function AgentPanel({
   if (!open) return null
 
   return (
-    <aside className="studio-agent" aria-label="Optional AI agent">
+    <aside className="studio-agent" aria-label="Official AI Support">
       <div className="studio-agent-head">
         <div>
-          <h2>AI Agent</h2>
-          <p className="studio-agent-note">Optional — you can design everything by hand</p>
+          <h2>AI Support</h2>
+          <p className="studio-agent-note">Official · optional — design by hand anytime</p>
         </div>
-        <button type="button" className="btn btn-ghost btn-sm" onClick={onClose} aria-label="Close agent">
+        <button type="button" className="btn btn-ghost btn-sm" onClick={onClose} aria-label="Close AI Support">
           ✕
         </button>
       </div>
+
+      <AiSupportBadge variant="full" />
 
       <div className="studio-agent-tabs" role="tablist">
         {(['assist', 'evaluate', 'optimize'] as AgentTab[]).map((t) => (
@@ -123,7 +126,7 @@ export function AgentPanel({
             className={`studio-agent-tab${tab === t ? ' active' : ''}`}
             onClick={() => setTab(t)}
           >
-            {t === 'assist' ? 'Assist' : t === 'evaluate' ? 'Evaluate' : 'Optimize'}
+            {t === 'assist' ? 'Propose' : t === 'evaluate' ? 'Evaluate' : 'Optimize'}
           </button>
         ))}
       </div>
@@ -151,13 +154,13 @@ export function AgentPanel({
               disabled={busy || !prompt.trim()}
               onClick={() => void askAgent()}
             >
-              {busy ? 'Asking…' : 'Ask agent to propose'}
+              {busy ? 'Working…' : 'Ask AI Support to propose'}
             </button>
 
             {pendingArch ? (
               <div className="studio-agent-propose">
                 <p>
-                  Agent proposed <strong>{pendingArch.nodes.length}</strong> services and{' '}
+                  AI Support proposed <strong>{pendingArch.nodes.length}</strong> services and{' '}
                   <strong>{pendingArch.edges.length}</strong> connections.
                 </p>
                 <div className="studio-agent-propose-actions">

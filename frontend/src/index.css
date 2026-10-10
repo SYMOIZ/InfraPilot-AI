@@ -430,8 +430,109 @@ textarea {
   color: var(--teal-700);
 }
 
+.landing-ai-badge {
+  margin: 0 0 1rem;
+  max-width: 22rem;
+}
+
 .landing-copy {
   max-width: 34rem;
+}
+
+/* Official AI Support mark */
+.ai-support-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  border: 1px solid color-mix(in srgb, var(--teal-600) 40%, var(--line));
+  background: linear-gradient(135deg, #ecfdf8 0%, #e0f2fe 100%);
+  color: var(--teal-900);
+  border-radius: 6px;
+}
+
+.ai-support-badge-compact {
+  padding: 0.2rem 0.5rem 0.2rem 0.35rem;
+  flex-shrink: 0;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.ai-support-badge-compact .ai-support-label {
+  letter-spacing: 0.01em;
+}
+
+.ai-support-badge-compact .ai-support-sub {
+  font-size: 0.62rem;
+  font-weight: 500;
+  color: var(--ink-muted);
+  padding-left: 0.35rem;
+  margin-left: 0.15rem;
+  border-left: 1px solid color-mix(in srgb, var(--teal-600) 35%, var(--line));
+}
+
+.ai-support-badge-full {
+  display: flex;
+  gap: 0.65rem;
+  padding: 0.65rem 0.75rem;
+  margin: 0.65rem 0.85rem 0;
+}
+
+.ai-support-badge-full .ai-support-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  min-width: 0;
+}
+
+.ai-support-badge-full .ai-support-text strong {
+  font-size: 0.82rem;
+  color: var(--teal-900);
+}
+
+.ai-support-badge-full .ai-support-text span {
+  font-size: 0.7rem;
+  color: var(--ink-muted);
+  line-height: 1.35;
+}
+
+.ai-support-mark {
+  display: inline-flex;
+  color: var(--teal-700);
+  flex-shrink: 0;
+}
+
+.ai-support-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: linear-gradient(135deg, #0f766e 0%, #0e7490 100%) !important;
+  border-color: transparent !important;
+  color: #fff !important;
+  box-shadow: 0 1px 0 rgba(15, 28, 36, 0.08);
+}
+
+.ai-support-toggle:hover {
+  filter: brightness(1.06);
+}
+
+.ai-support-toggle.active {
+  outline: 2px solid color-mix(in srgb, #99f6e4 70%, transparent);
+  outline-offset: 1px;
+}
+
+.ai-support-toggle-icon {
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.ai-support-on {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 0.1rem 0.35rem;
+  border-radius: 3px;
 }
 
 .landing-copy .lede {
@@ -761,6 +862,95 @@ textarea {
   background: color-mix(in srgb, var(--chip-color) 22%, #fff);
 }
 
+.palette-chip-icon {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  position: relative;
+}
+
+.palette-chip-img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.palette-chip-remove {
+  margin-left: auto;
+  color: var(--ink-faint);
+  font-size: 1rem;
+  line-height: 1;
+  padding: 0 0.15rem;
+  cursor: pointer;
+}
+
+.palette-chip-remove:hover {
+  color: var(--fail);
+}
+
+.palette-custom-form {
+  border-top: 1px solid var(--line);
+  padding-top: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.palette-custom-hint {
+  font-size: 0.7rem;
+  color: var(--ink-faint);
+  margin: 0 0 0.5rem;
+  line-height: 1.35;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+}
+
+.custom-tool-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.custom-tool-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--ink-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.custom-tool-form input {
+  font: inherit;
+  font-size: 0.8rem;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 0.35rem 0.45rem;
+  background: #fff;
+}
+
+.data-flow-label {
+  position: absolute;
+  pointer-events: none;
+  font-size: 0.65rem;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  padding: 0.1rem 0.35rem;
+  color: var(--ink-muted);
+}
+
+.data-flow-packet {
+  pointer-events: none;
+}
+
 /* Canvas */
 .studio-canvas-host {
   position: relative;
@@ -791,8 +981,11 @@ textarea {
 
 /* AWS nodes */
 .aws-node {
-  min-width: 140px;
-  max-width: 200px;
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-width: 168px;
+  max-width: 240px;
   background: #fff;
   border: 1px solid var(--line-strong);
   border-left-width: 4px;
@@ -806,10 +999,35 @@ textarea {
   box-shadow: 0 0 0 2px rgba(13, 148, 136, 0.25);
 }
 
+.aws-node-icon-wrap {
+  flex: 0 0 40px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.aws-node-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  display: block;
+}
+
+.aws-node-icon-fallback {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
 .aws-node-body {
   display: flex;
   flex-direction: column;
   gap: 0.15rem;
+  min-width: 0;
+  flex: 1;
   padding: 0.45rem 0.6rem;
 }
 

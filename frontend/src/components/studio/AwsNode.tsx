@@ -1,6 +1,6 @@
 import { memo, useCallback, useEffect, useState, type KeyboardEvent } from 'react'
 import { Handle, Position, type Node, type NodeProps } from '@xyflow/react'
-import { getService, getServiceColor } from '../../catalog/services'
+import { getService, getServiceColor, getServiceIconUrl } from '../../catalog/services'
 
 export type AwsNodeData = {
   service_id: string
@@ -14,6 +14,7 @@ export type AwsFlowNode = Node<AwsNodeData, 'aws'>
 function AwsNodeComponent({ id, data, selected }: NodeProps<AwsFlowNode>) {
   const service = getService(data.service_id)
   const color = getServiceColor(data.service_id)
+  const iconUrl = getServiceIconUrl(data.service_id, data.props)
   const [editing, setEditing] = useState(false)
   const [draft, setDraft] = useState(data.label)
 
@@ -43,6 +44,15 @@ function AwsNodeComponent({ id, data, selected }: NodeProps<AwsFlowNode>) {
   return (
     <div className={`aws-node${selected ? ' selected' : ''}`} style={{ borderLeftColor: color }}>
       <Handle type="target" position={Position.Left} className="aws-handle" />
+      <div className="aws-node-icon-wrap" style={{ background: `${color}14` }}>
+        {iconUrl ? (
+          <img src={iconUrl} alt="" className="aws-node-icon" draggable={false} />
+        ) : (
+          <span className="aws-node-icon-fallback" style={{ color }}>
+            {(service?.shortLabel ?? data.service_id).slice(0, 2)}
+          </span>
+        )}
+      </div>
       <div className="aws-node-body">
         <span className="aws-node-service" style={{ color }}>
           {service?.shortLabel ?? data.service_id}

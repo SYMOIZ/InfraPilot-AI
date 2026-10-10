@@ -33,6 +33,7 @@ export function Studio() {
   const [saving, setSaving] = useState(false)
   const [dirty, setDirty] = useState(false)
   const [evaluating, setEvaluating] = useState(false)
+  const [exportingGif, setExportingGif] = useState(false)
   const [agentOpen, setAgentOpen] = useState(() =>
     typeof window !== 'undefined' ? window.innerWidth >= 960 : true,
   )
@@ -150,15 +151,27 @@ export function Studio() {
     }
   }
 
-  async function handleExport(kind: 'drawio' | 'png' | 'excel') {
+  async function handleExport(kind: 'drawio' | 'png' | 'excel' | 'gif') {
     if (!projectId || !architecture) return
     try {
       await persist(architecture)
-      if (kind === 'drawio') await api.exportDrawio(projectId)
+      if (kind === 'gif') {
+        setExportingGif(true)
+        setToast('Recording data-travel GIF…')
+        const el = document.querySelector('.studio-canvas-host .react-flow') as HTMLElement | null
+        if (!el) throw new Error('Canvas not ready')
+        const { downloadBlob, exportCanvasGif } = await import('../utils/exportGif')
+        const blob = await exportCanvasGif(el, { frames: 10, delayMs: 140 })
+        const safeName = (project?.name || projectId).replace(/[^\w.-]+/g, '_')
+        downloadBlob(blob, `${safeName}-architecture.gif`)
+        setToast('GIF downloaded')
+      } else if (kind === 'drawio') await api.exportDrawio(projectId)
       else if (kind === 'png') await api.exportPng(projectId)
       else await api.exportExcel(projectId)
     } catch (err) {
       setToast(errMessage(err))
+    } finally {
+      setExportingGif(false)
     }
   }
 
@@ -194,6 +207,7 @@ export function Studio() {
         saving={saving}
         dirty={dirty}
         evaluating={evaluating}
+        exportingGif={exportingGif}
         agentOpen={agentOpen}
         onSave={() => void handleSave()}
         onEvaluate={() => void handleEvaluate()}

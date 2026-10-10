@@ -45,7 +45,15 @@ def validate_architecture(architecture: Architecture) -> Tuple[bool, List[str]]:
         if node.id in seen:
             errors.append(f"Duplicate node id: {node.id}")
         seen.add(node.id)
-        if catalog_ids and node.service_id not in catalog_ids:
+        # Allow custom palette tools (custom_*) and unknown ids with icon props.
+        is_custom = node.service_id.startswith("custom_")
+        has_icon = bool((node.props or {}).get("icon_url"))
+        if (
+            catalog_ids
+            and node.service_id not in catalog_ids
+            and not is_custom
+            and not has_icon
+        ):
             errors.append(
                 f"Unknown service_id '{node.service_id}' on node '{node.id}'"
             )

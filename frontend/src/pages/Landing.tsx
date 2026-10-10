@@ -1,6 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import { useState } from 'react'
 import { api, ApiError, isDemoMode } from '../api/client'
+import { AiSupportBadge } from '../components/studio/AiSupportBadge'
 
 export function Landing() {
   const navigate = useNavigate()
@@ -35,9 +36,11 @@ export function Landing() {
         <h1 className="landing-brand">
           InfraPilot <em>AI</em>
         </h1>
+        <AiSupportBadge variant="full" className="landing-ai-badge" />
         <p className="lede">
-          Draw AWS architectures by hand on a canvas. Optionally ask the agent to propose,
-          evaluate, or optimize.
+          Draw AWS architectures by hand with official service icons. Turn on{' '}
+          <strong>AI Support</strong> anytime for Bedrock-powered proposals, evaluation, and
+          optimization — never required.
         </p>
         <div className="cta-row anim-rise anim-delay-1">
           <Link to="/dashboard" className="btn">
