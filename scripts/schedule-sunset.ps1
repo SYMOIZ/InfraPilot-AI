@@ -60,4 +60,4 @@ if ($LASTEXITCODE -eq 0) {
 } else {
   Write-Host "Schedule create failed — sunset still covered by GitHub Actions .github/workflows/sunset.yml"
 }
-Write-Host "Destructive delete: GitHub Actions sunset.yml (OIDC) or bash scripts/teardown-auto.sh"
+Write-Host 'Destructive delete: GitHub Actions sunset.yml (OIDC) or bash scripts/teardown-auto.sh'
