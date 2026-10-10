@@ -19,19 +19,26 @@ Write-Host "SNS topic: $TopicArn"
 
 $trust = '{"Version":"2012-10-17","Statement":[{"Effect":"Allow","Principal":{"Service":"scheduler.amazonaws.com"},"Action":"sts:AssumeRole"}]}'
 $trustPath = Join-Path $env:TEMP "infrapilot-scheduler-trust.json"
-Set-Content $trustPath $trust -Encoding ascii
+Set-Content -Path $trustPath -Value $trust -Encoding ascii
 
-$roleExists = $false
 aws iam get-role --role-name $RoleName 2>$null | Out-Null
-if ($LASTEXITCODE -eq 0) { $roleExists = $true }
-if (-not $roleExists) {
+if ($LASTEXITCODE -ne 0) {
     aws iam create-role --role-name $RoleName --assume-role-policy-document "file://$trustPath" | Out-Null
     Start-Sleep -Seconds 10
 }
 
-$policy = "{`"Version`":`"2012-10-17`",`"Statement`":[{`"Effect`":`"Allow`",`"Action`":[`"sns:Publish`"],`"Resource`":`"$TopicArn`"}]}"
+$policy = @"
+{
+  "Version": "2012-10-17",
+  "Statement": [{
+    "Effect": "Allow",
+    "Action": ["sns:Publish"],
+    "Resource": "$TopicArn"
+  }]
+}
+"@
 $polPath = Join-Path $env:TEMP "infrapilot-scheduler-policy.json"
-Set-Content $polPath $policy -Encoding ascii
+Set-Content -Path $polPath -Value $policy -Encoding ascii
 aws iam put-role-policy --role-name $RoleName --policy-name sns-publish --policy-document "file://$polPath" | Out-Null
 $RoleArn = aws iam get-role --role-name $RoleName --query Role.Arn --output text
 
@@ -39,25 +46,28 @@ aws scheduler delete-schedule --name $ScheduleName --region $Region 2>$null | Ou
 
 $payload = '{"project":"InfraPilot AI","action":"SUNSET_DUE","date":"2026-11-08","teardown":"Run GitHub Actions sunset.yml or scripts/teardown-auto.sh"}'
 $targetPath = Join-Path $env:TEMP "infrapilot-scheduler-target.json"
-$targetObj = @{
-  Arn = $TopicArn
-  RoleArn = $RoleArn
-  Input = $payload
-} | ConvertTo-Json -Compress
-Set-Content $targetPath $targetObj -Encoding ascii
+@"
+{
+  "Arn": "$TopicArn",
+  "RoleArn": "$RoleArn",
+  "Input": $($payload | ConvertTo-Json)
+}
+"@ | Set-Content -Path $targetPath -Encoding ascii
 
 aws scheduler create-schedule `
   --name $ScheduleName `
   --region $Region `
   --schedule-expression "at($AtUtc)" `
-  --flexible-time-window "Mode=OFF" `
+  --flexible-time-window Mode=OFF `
   --target "file://$targetPath" `
   --action-after-completion DELETE
 
 if ($LASTEXITCODE -eq 0) {
-  Write-Host "Created schedule $ScheduleName -> SNS $TopicArn"
-  Write-Host "Optional email: aws sns subscribe --topic-arn $TopicArn --protocol email --notification-endpoint YOU@example.com --region $Region"
+  Write-Host "Created schedule $ScheduleName"
+  Write-Host "SNS: $TopicArn"
+  Write-Host "Subscribe email with: aws sns subscribe --topic-arn $TopicArn --protocol email --notification-endpoint YOU@example.com --region $Region"
 } else {
-  Write-Host "Schedule create failed — sunset still covered by GitHub Actions .github/workflows/sunset.yml"
+  Write-Host "Schedule create failed - sunset still covered by GitHub Actions sunset.yml"
 }
-Write-Host 'Destructive delete: GitHub Actions sunset.yml (OIDC) or bash scripts/teardown-auto.sh'
+
+Write-Host "Destructive delete via GitHub Actions sunset.yml or scripts/teardown-auto.sh"
