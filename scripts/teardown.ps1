@@ -1,5 +1,8 @@
 # Tear down InfraPilot AI prototype resources created by deploy.ps1
-param([string]$Region = "us-east-1")
+param(
+    [string]$Region = "us-east-1",
+    [switch]$Force
+)
 $ErrorActionPreference = "Continue"
 $AccountId = aws sts get-caller-identity --query Account --output text
 $ArtifactsBucket = "infrapilot-artifacts-$AccountId-$Region"
@@ -10,8 +13,11 @@ $RoleName        = "infrapilot-lambda-role"
 $ApiName         = "infrapilot-http-api"
 
 Write-Host "This will delete InfraPilot prototype resources in $Region / $AccountId"
-$confirm = Read-Host "Type DELETE to confirm"
-if ($confirm -ne "DELETE") { Write-Host "Aborted"; exit 1 }
+Write-Host "Sunset date for this project: 8 November 2026"
+if (-not $Force) {
+  $confirm = Read-Host "Type DELETE to confirm"
+  if ($confirm -ne "DELETE") { Write-Host "Aborted"; exit 1 }
+}
 
 $apis = aws apigatewayv2 get-apis --region $Region --query "Items[?Name=='$ApiName'].ApiId" --output text
 if ($apis) {

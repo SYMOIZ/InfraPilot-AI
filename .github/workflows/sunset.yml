@@ -1,0 +1,88 @@
+name: Sunset auto-delete (8 Nov 2026)
+
+# Deletes InfraPilot AWS prototype resources on the scheduled sunset date.
+# Also runnable manually via workflow_dispatch.
+
+on:
+  schedule:
+    # 12:00 UTC on 8 November every year — teardown only when year is 2026
+    - cron: "0 12 8 11 *"
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: Type SUNSET to confirm immediate teardown
+        required: true
+        type: string
+      region:
+        description: AWS region
+        required: true
+        default: us-east-1
+        type: string
+
+permissions:
+  id-token: write
+  contents: read
+
+env:
+  AWS_REGION: ${{ inputs.region || vars.AWS_REGION || 'us-east-1' }}
+  SUNSET_DATE: "2026-11-08"
+
+jobs:
+  sunset:
+    name: Auto-delete InfraPilot resources
+    runs-on: ubuntu-latest
+    steps:
+      - name: Decide whether to teardown
+        id: gate
+        run: |
+          set -euo pipefail
+          TODAY="$(date -u +%Y-%m-%d)"
+          DO=false
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            if [ "${{ inputs.confirm }}" = "SUNSET" ]; then
+              DO=true
+            else
+              echo "Manual run requires confirm=SUNSET (got: ${{ inputs.confirm }})"
+              exit 1
+            fi
+          elif [ "$TODAY" = "$SUNSET_DATE" ]; then
+            DO=true
+          fi
+          echo "teardown=$DO" >> "$GITHUB_OUTPUT"
+          echo "Today=$TODAY sunset=$SUNSET_DATE teardown=$DO"
+
+      - uses: actions/checkout@v4
+        if: steps.gate.outputs.teardown == 'true'
+
+      - name: Require OIDC role
+        if: steps.gate.outputs.teardown == 'true'
+        run: |
+          if [ -z "${{ vars.AWS_ROLE_TO_ASSUME }}" ]; then
+            echo "::error::Set vars.AWS_ROLE_TO_ASSUME (OIDC deploy/sunset role)."
+            echo "Until OIDC is configured, run locally: bash scripts/teardown-auto.sh"
+            exit 1
+          fi
+
+      - name: Configure AWS credentials (OIDC)
+        if: steps.gate.outputs.teardown == 'true'
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_TO_ASSUME }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Run teardown
+        if: steps.gate.outputs.teardown == 'true'
+        run: |
+          chmod +x scripts/teardown-auto.sh
+          bash scripts/teardown-auto.sh "${{ env.AWS_REGION }}"
+
+      - name: Summary
+        run: |
+          cat <<EOF >> "$GITHUB_STEP_SUMMARY"
+          ## InfraPilot sunset
+          - Target date: \`$SUNSET_DATE\`
+          - Teardown this run: \`${{ steps.gate.outputs.teardown }}\`
+          - Region: \`${{ env.AWS_REGION }}\`
+          - Script: \`scripts/teardown-auto.sh\`
+          - Cost estimate: \`docs/SUNSET_AND_COST.md\`
+          EOF

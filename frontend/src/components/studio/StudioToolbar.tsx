@@ -38,6 +38,9 @@ export function StudioToolbar({
         <span className={`studio-save-status${dirty ? ' dirty' : ''}`}>
           {saving ? 'Saving…' : dirty ? 'Unsaved' : 'Saved'}
         </span>
+        <span className="studio-sunset-chip" title="AWS prototype auto-deletes on 8 Nov 2026">
+          Sunset 8 Nov 2026
+        </span>
       </div>
       <div className="studio-toolbar-actions">
         <button type="button" className="btn btn-sm btn-secondary" onClick={onSave} disabled={saving}>

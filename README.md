@@ -161,6 +161,19 @@ scripts/           AWS CLI deploy helpers
 
 ---
 
+## Sunset — auto-delete 8 November 2026
+
+This prototype AWS stack is scheduled to be **auto-deleted on 8 November 2026**.
+
+| | |
+|--|--|
+| Pipeline | [`.github/workflows/sunset.yml`](.github/workflows/sunset.yml) |
+| Local teardown | `bash scripts/teardown-auto.sh` |
+| Cost estimate to sunset | [docs/SUNSET_AND_COST.md](docs/SUNSET_AND_COST.md) |
+
+**Estimated AWS cost until 8 Nov (≈29 days, `DEMO_MODE=true`):** about **$0.50 – $3.50**.  
+With light live Bedrock: about **$2 – $15**. Details in the doc above.
+
 ## License
 
 MIT — see [LICENSE](LICENSE). Contributions: [CONTRIBUTING.md](CONTRIBUTING.md).

@@ -535,6 +535,18 @@ textarea {
   border-radius: 3px;
 }
 
+.studio-sunset-chip {
+  flex-shrink: 0;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #92400e;
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 4px;
+  padding: 0.15rem 0.45rem;
+  white-space: nowrap;
+}
+
 .landing-copy .lede {
   font-size: 1.05rem;
   margin: 0 0 1.5rem;
